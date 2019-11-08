@@ -1,0 +1,37 @@
+﻿@model JsonEntityViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+    <div class="text-center">
+        <div class="form-group">
+            <div class="col-md-4">
+                <form method="post" asp-controller="Home" asp-action="MakeData">
+                    <button type="submit" class="btn btn-sm btn-primary">Fill table</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-4">
+                <form method="post" asp-controller="Home" asp-action="FindBy">
+                    <input type="text" name="val" />
+                    <button type="submit" class="btn btn-sm btn-primary">Find</button>
+                </form>
+            </div>
+        </div>
+
+        @if (Model.Change)
+        {
+            <div class="col-md-10">
+                @foreach (var item in Model.Val)
+                {
+                    <p>@item</p>
+                }
+            </div>
+        }
+        else
+        {
+            <p>Value not loaded</p>
+        }
+    </div>
