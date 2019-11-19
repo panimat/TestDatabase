@@ -22,43 +22,58 @@ namespace BL.Services.Services
             throw new NotImplementedException();
         }
 
-        public void FillTable()
+        public void FillTable(int amountValue)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            Random random = new Random();
-
-            for (int i = 0; i < 10000; i++)
+            try
             {
-                StringBuilder result = new StringBuilder(6);
-                for (int j = 0; j < 6; j++)
-                    result.Append(chars[random.Next(chars.Length)]);
-                   
-                _unitOfWork.JsonEntities.Create(new JsonEntity {
-                    TestJsonColumn = "{ " + '\u0022' + result.ToString() + '\u0022' + " : " + '\u0022' + result.ToString() + '\u0022' + " }",
-                    StringField = result.ToString(),
-                    JsonValField = new JsonField
+                _unitOfWork.ResultEntities.DeleteAllData();
+                _unitOfWork.JsonEntities.DeleteAllData();
+                _unitOfWork.Save();
+
+                const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                Random random = new Random();
+
+                for (int i = 0; i < amountValue; i++)
+                {
+                    StringBuilder result = new StringBuilder(10);
+                    for (int j = 0; j < 10; j++)
+                        result.Append(chars[random.Next(chars.Length)]);
+
+                    _unitOfWork.JsonEntities.Create(new JsonEntity
                     {
-                        Key = result.ToString(),
-                        Value = result.ToString()
-                    }
-                });
+                        TestJsonColumn = new JsonField
+                        {
+                            Key = result.ToString(),
+                            Value = result.ToString()
+                        },
+                        StringField = result.ToString(),
+                        JsonValField = new JsonField
+                        {
+                            Key = result.ToString(),
+                            Value = result.ToString()
+                        },
+                        JsonVal = new JsonField
+                        {
+                            Key = result.ToString(),
+                            Value = result.ToString()
+                        }
+                    });
+                }
+                _unitOfWork.Save();
             }
-            _unitOfWork.Save();
-        }
+            catch(Exception ex)
+            {
 
-        public double GetJsonVal(string findVal)
-        {
-            return _unitOfWork.JsonEntities.FindByJson(findVal);
+            }
         }
-
-        public double GetStringVal(string findVal)
-        {
-            return _unitOfWork.JsonEntities.FindByString(findVal);
-        }
-
         public int Count()
         {
             return _unitOfWork.JsonEntities.Count();
+        }
+
+        public int GetLastIndex()
+        {
+            return _unitOfWork.JsonEntities.GetAll().OrderByDescending(x => x.Id).First().Id;
         }
     }
 }

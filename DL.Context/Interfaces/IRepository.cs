@@ -2,19 +2,20 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text;
+using System.Linq.Expressions;
 
 namespace DL.Context.Interfaces
 {
-    public interface IRepository<T> where T : class
+    public interface IRepository<T> : IDisposable 
+                            where T : class
     {
         IEnumerable<T> GetAll();
         T Get(int id);
-        IEnumerable<T> Find(Func<T, Boolean> predicate);
+        IEnumerable<T> Get(Expression<Func<T, bool>> predicate);
         Task Create(T item);
         void Update(T item);
-        void Delete(int id);
-        double FindByJson(string _findVal);
-        double FindByString(string _findVal);
-        int Count();
+        void Delete(T item);
+        void DeleteAllData();
+        
     }
 }

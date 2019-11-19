@@ -11,23 +11,10 @@ using Microsoft.Extensions.Logging;
 
 namespace DL.Context.Repositories
 {
-    public class JsonEntitiRepository : IRepository<JsonEntity>
+    public class JsonEntitiRepository : Repository<JsonEntity>, IJsonEntityRepository
     {
-        private AppDbContext _dbContext;
-        public JsonEntitiRepository(AppDbContext dbContext)
+        public JsonEntitiRepository(AppDbContext dbContext) : base(dbContext)
         {
-            _dbContext = dbContext;
-        }
-        public async Task Create(JsonEntity item)
-        {
-            await _dbContext.JsonEntities.AddAsync(item);
-        }
-
-        public void Delete(int id)
-        {
-            JsonEntity jsonEntity = _dbContext.JsonEntities.Find(id);
-            if (jsonEntity != null)
-                _dbContext.JsonEntities.Remove(jsonEntity);
         }
 
         public IEnumerable<JsonEntity> Find(Func<JsonEntity, bool> predicate)
@@ -35,26 +22,55 @@ namespace DL.Context.Repositories
             return _dbContext.JsonEntities.Where(predicate).ToList();
         }
 
-        public double FindByJson(string _findVal)
+        public IEnumerable<double> FindByJson(string _findVal)
         {
-            Stopwatch sw = Stopwatch.StartNew();
+            var listTime = new List<double>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Stopwatch sw = Stopwatch.StartNew();
             var val = _dbContext.JsonEntities.Where(x => x.JsonValField.Value == _findVal).FirstOrDefault();
             sw.Stop();
 
-            if (val != null)
-                return sw.Elapsed.TotalMilliseconds;
-            else return 0;
+                if (val != null)
+                    listTime.Add(sw.Elapsed.TotalMilliseconds);
+            }
+
+            return listTime;
         }
 
-        public double FindByString(string _findVal)
+        public IEnumerable<double> FindByString(string _findVal)
         {
-            Stopwatch sw = Stopwatch.StartNew();
-            var val = _dbContext.JsonEntities.Where(x => x.StringField == _findVal).FirstOrDefault();
-            sw.Stop();
+            var listTime = new List<double>();
 
-            if (val != null)
-                return sw.Elapsed.TotalMilliseconds;
-            else return 0;
+            for (int i = 0; i < 10; i++)
+            {
+                Stopwatch sw = Stopwatch.StartNew();
+                var val = _dbContext.JsonEntities.Where(x => x.StringField == _findVal).FirstOrDefault();
+                sw.Stop();
+
+                if (val != null)
+                    listTime.Add(sw.Elapsed.TotalMilliseconds);
+            }
+
+            return listTime;
+        }
+
+        public IEnumerable<double> FindByJsonEntity(string _findVal)
+        {
+            var listTime = new List<double>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Stopwatch sw = Stopwatch.StartNew();
+                var val = _dbContext.JsonEntities.Where(x => x.JsonVal.Value == _findVal).FirstOrDefault();
+                sw.Stop();
+
+                if (val != null)
+                    listTime.Add(sw.Elapsed.TotalMilliseconds);
+            }
+
+            return listTime;
         }
 
         public int Count()
@@ -62,19 +78,26 @@ namespace DL.Context.Repositories
             return _dbContext.JsonEntities.Count();
         }
 
-        public JsonEntity Get(int id)
+        public IEnumerable<double> FindByJsonB(string _findVal)
         {
-            return _dbContext.JsonEntities.Find(id);
+            var listTime = new List<double>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Stopwatch sw = Stopwatch.StartNew();
+                var val = _dbContext.JsonEntities.Where(x => x.TestJsonColumn.Value == _findVal).FirstOrDefault();
+                sw.Stop();
+             
+                if (val != null)
+                    listTime.Add(sw.Elapsed.TotalMilliseconds);
+            }
+
+            return listTime;
         }
 
-        public IEnumerable<JsonEntity> GetAll()
+        public int GetLastIndex()
         {
-            return _dbContext.JsonEntities;
-        }
-
-        public void Update(JsonEntity item)
-        {
-            _dbContext.Entry(item).State = EntityState.Modified;
+            return _dbContext.JsonEntities.OrderByDescending(x => x.Id).First().Id;
         }
     }
 }

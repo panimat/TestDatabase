@@ -26,6 +26,7 @@ namespace BL.Services.Initializer
         private static void RegisterServices()
         {
             _logger.LogInformation("Register Buisness service");
+            _services.AddTransient<IFindService, FindService>();
             _services.AddTransient<IJsonEntService, JsonEntService>();
 
             _services.AddDataServices(_configuration, _logger);

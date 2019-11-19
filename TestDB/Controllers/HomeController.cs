@@ -4,20 +4,25 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using TestDB.Models;
 using BL.Services.Interfaces;
+using DL.Context.Interfaces;
+using System.Web.Helpers;
 
 namespace TestDB.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IJsonEntService _entService;
-        public HomeController(IJsonEntService entService)
+        private readonly IFindService _findService;
+        private readonly IUnitOfWork _unitOfWork;
+        public HomeController(IFindService findService, IUnitOfWork unitOfWork)
         {
-            _entService = entService;
+            _findService = findService;
+            _unitOfWork = unitOfWork;
+            var viewResult = new ResultViewModel() { Results = new List<Result>(), Change = false };
         }
 
         public IActionResult Index()
         {
-            return View(new JsonEntityViewModel());
+            return View(new ResultViewModel());
         }
 
         public IActionResult Privacy()
@@ -34,35 +39,35 @@ namespace TestDB.Controllers
         [HttpPost]
         public IActionResult MakeData()
         {
-            _entService.FillTable();
             return View("OkPage");
         }
 
-        [HttpPost]
-        public IActionResult FindBy(string val)
+        
+        [HttpGet]
+        public IActionResult FindBy(int amount)
         {
-            if (!String.IsNullOrEmpty(val))
+            _findService.FindValues(amount);
+
+            var viewResult = new ResultViewModel() { Results = new List<Result>(), Change = false };
+
+            foreach (var item in _unitOfWork.ResultEntities.GetAll())
             {
-                var values = new List<string>();
-
-                double temp1, temp2;
-
-                for (int i = 0; i < 50; i++)
+                var result = new Result()
                 {
-                    temp1 = Math.Round(_entService.GetJsonVal(val), 5);
+                    AmountElements = item.AmountElements,
+                    EntityFind = item.EntityFind,
+                    JSONBFind = item.JSONBFind,
+                    JSONFind = item.JSONFind,
+                    StringFind = item.StringFind
+                };
 
-                    temp2 = Math.Round(_entService.GetStringVal(val), 5);
-
-                    values.Add($"Json value: " + temp1 + " string value: " + temp2);
-                }
-
-                return View("Index", new JsonEntityViewModel
-                {
-                    Val = values,
-                    Change = true
-                }) ;;
+                viewResult.Results.Add(result);
             }
-            else return View("Index", new JsonEntityViewModel());
+
+            viewResult.Change = true;
+
+            return View("Index", viewResult);
         }
+        
     }
 }

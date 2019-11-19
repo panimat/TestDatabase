@@ -6,6 +6,7 @@ namespace DL.Context.Context
     public class AppDbContext : DbContext
     {
         public DbSet<JsonEntity> JsonEntities { get; set; }
+        public DbSet<Result> Result { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

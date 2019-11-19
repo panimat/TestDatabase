@@ -1,23 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using DL.Context.Entities;
-using DL.Context.Interfaces;
+﻿using DL.Context.Interfaces;
 using DL.Context.Context;
-using Microsoft.Extensions.Logging;
 
 namespace DL.Context.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
         private JsonEntitiRepository jsonEntityRepository;
+        private ResultRepository resultRepository;
+
         private readonly AppDbContext _dbContext;
 
         public UnitOfWork(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public IRepository<JsonEntity> JsonEntities
+        public IJsonEntityRepository JsonEntities
         {
             get
             {
@@ -26,7 +23,15 @@ namespace DL.Context.Repositories
                 return jsonEntityRepository;
             }
         }
-
+        public IResultRepositories ResultEntities
+        {
+            get
+            {
+                if (resultRepository == null)
+                    resultRepository = new ResultRepository(_dbContext);
+                return resultRepository;
+            }
+        }
         public void Save()
         {
             _dbContext.SaveChanges();

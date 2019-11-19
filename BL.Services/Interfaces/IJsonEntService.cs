@@ -6,10 +6,9 @@ namespace BL.Services.Interfaces
 {
     public interface IJsonEntService
     {
-        double GetStringVal(string _findVal);
-        double GetJsonVal(string _findVal);
         int Count();
-        void FillTable();
+        void FillTable(int amountValue);
+        int GetLastIndex();
         void Dispose();
     }
 }
