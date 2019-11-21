@@ -21,34 +21,45 @@ namespace BL.Services.Services
         
         public void FindValues(int amount)
         {
-            _jsonEntService.FillTable(amount);
-
-            var values = FindRandomValue(GetMinVal(amount), GetMinVal(amount) + amount);
-
-            foreach (var item in values)
+            for (int i = 1; i < 30; i++)
             {
-                var result = new Result();
+                var localAmount = amount * i;
+                _jsonEntService.FillTable(localAmount);
 
-                item.Remove(0, 1);
+                var values = FindRandomValue(GetMinVal(localAmount), GetMinVal(localAmount) + localAmount);
 
-                result.AmountElements = amount;
-                result.JSONFind = Math.Round(Enumerable.Average(GetJsonVal(item)), 5);
-                result.JSONBFind = Math.Round(Enumerable.Average(GetJsonB(item)), 5);
-                result.StringFind = Math.Round(Enumerable.Average(GetStringVal(item)), 5);
-                result.EntityFind = Math.Round(Enumerable.Average(GetJsonValEnt(item)), 5);
+                foreach (var item in values)
+                {
+                    var result = new Result();
 
-                _unitOfWork.ResultEntities.Create(result);
-                _unitOfWork.Save();
+                    item.Remove(0, 1);
+
+                    result.AmountElements = localAmount;
+                    result.JSONFind = Math.Round(Enumerable.Average(GetJsonVal(item)), 5);
+                    result.JSONBFind = Math.Round(Enumerable.Average(GetJsonB(item)), 5);
+                    result.StringFind = Math.Round(Enumerable.Average(GetStringVal(item)), 5);
+                    result.EntityFind = Math.Round(Enumerable.Average(GetJsonValEnt(item)), 5);
+
+                    _unitOfWork.ResultEntities.Create(result);
+                    _unitOfWork.Save();
+                }
             }
         }
 
         private IEnumerable<string> FindRandomValue(int minVal, int maxVal)
         {
-            Random rand = new Random();
             var arr = new List<string>();
-            for (int i = 0; i < 5; i++)
-                arr.Add(_unitOfWork.JsonEntities.Get(rand.Next(minVal, maxVal)).StringField);
 
+            try
+            {
+                Random rand = new Random();
+                for (int i = 0; i < 5; i++)
+                    arr.Add(_unitOfWork.JsonEntities.Get(rand.Next(minVal, maxVal)).StringField);
+            }
+            catch (Exception ex)
+            {
+
+            }
             return arr;
         }
 

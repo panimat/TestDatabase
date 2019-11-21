@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using TestDB.Models;
 using BL.Services.Interfaces;
 using DL.Context.Interfaces;
-using System.Web.Helpers;
+using System.Linq;
 
 namespace TestDB.Controllers
 {
@@ -13,44 +11,52 @@ namespace TestDB.Controllers
     {
         private readonly IFindService _findService;
         private readonly IUnitOfWork _unitOfWork;
-        public HomeController(IFindService findService, IUnitOfWork unitOfWork)
+        private readonly IJsonEntService _jsonEntService;
+        public HomeController(IFindService findService, IUnitOfWork unitOfWork, IJsonEntService jsonEntService)
         {
             _findService = findService;
             _unitOfWork = unitOfWork;
-            var viewResult = new ResultViewModel() { Results = new List<Result>(), Change = false };
+            _jsonEntService = jsonEntService;
         }
 
-        public IActionResult Index()
+        // GET: Home
+        public ActionResult Index()
         {
-            return View(new ResultViewModel());
+            return View(GetResult());
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        [HttpPost]
-        public IActionResult MakeData()
-        {
-            return View("OkPage");
-        }
-
-        
         [HttpGet]
         public IActionResult FindBy(int amount)
         {
             _findService.FindValues(amount);
 
+            return View("Index", GetResult());
+        }
+
+        [HttpGet]
+        public IActionResult ClearResult()
+        {
+            _jsonEntService.ClearResult();
+            return View("Index", GetResult());
+        }
+
+        [HttpGet]
+        public IActionResult ClearDB()
+        {
+            _jsonEntService.ClearDB();
+            return View("Index", GetResult());
+        }
+
+        private ResultViewModel GetResult()
+        {
             var viewResult = new ResultViewModel() { Results = new List<Result>(), Change = false };
 
-            foreach (var item in _unitOfWork.ResultEntities.GetAll())
+            var allRes = _unitOfWork.ResultEntities.GetAll();
+            
+            if (allRes == null)
+                return new ResultViewModel();
+
+            foreach (var item in allRes)
             {
                 var result = new Result()
                 {
@@ -64,10 +70,10 @@ namespace TestDB.Controllers
                 viewResult.Results.Add(result);
             }
 
+            viewResult.Results.OrderBy(x => x.AmountElements);
             viewResult.Change = true;
 
-            return View("Index", viewResult);
+            return viewResult;
         }
-        
     }
 }
