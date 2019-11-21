@@ -2,16 +2,35 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BL.Services.Interfaces;
+using BL.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using TestDB.Models;
 
 namespace TestDB.Controllers
 {
     public class LineChartController : Controller
     {
+        private readonly IDataService _dataService;
+        public LineChartController(IDataService dataService)
+        {
+            _dataService = dataService;
+        }
         public IActionResult Index()
         {
+            
+            var data = _dataService.GetData();
+
+            
+            ViewBag.DataPointsJson = JsonConvert.SerializeObject(data["dataPointsJson"]);
+            ViewBag.DataPointsJsonB = JsonConvert.SerializeObject(data["dataPointsJsonB"]);
+            ViewBag.DataPointsString = JsonConvert.SerializeObject(data["dataPointsString"]);
+            ViewBag.DataPointsEntity = JsonConvert.SerializeObject(data["dataPointsEntity"]);
+
+            return View();
+            
+            
+            /*
             List<DataPoint> dataPoints1 = new List<DataPoint>();
             List<DataPoint> dataPoints2 = new List<DataPoint>();
             List<DataPoint> dataPoints3 = new List<DataPoint>();
@@ -42,6 +61,8 @@ namespace TestDB.Controllers
             ViewBag.DataPoints3 = JsonConvert.SerializeObject(dataPoints3);
 
             return View();
+            */
+            
         }
     }
 }

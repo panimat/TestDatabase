@@ -28,6 +28,7 @@ namespace BL.Services.Initializer
             _logger.LogInformation("Register Buisness service");
             _services.AddTransient<IFindService, FindService>();
             _services.AddTransient<IJsonEntService, JsonEntService>();
+            _services.AddTransient<IDataService, DataService>();
 
             _services.AddDataServices(_configuration, _logger);
         }

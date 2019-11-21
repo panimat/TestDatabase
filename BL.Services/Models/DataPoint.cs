@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace BL.Services.Models
 {
+    //DataContract for Serializing Data - required to serve in JSON format
     [DataContract]
     public class DataPoint
     {
-        public DataPoint(string label, double y)
+        public DataPoint(int label, double y)
         {
             this.Label = label;
             this.Y = y;
@@ -17,7 +18,7 @@ namespace BL.Services.Models
 
         //Explicitly setting the name to be used while serializing to JSON.
         [DataMember(Name = "label")]
-        public string Label = "";
+        public Nullable<int> Label = null;
 
         //Explicitly setting the name to be used while serializing to JSON.
         [DataMember(Name = "y")]

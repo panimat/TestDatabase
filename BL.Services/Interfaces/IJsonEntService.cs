@@ -10,5 +10,7 @@ namespace BL.Services.Interfaces
         void FillTable(int amountValue);
         int GetLastIndex();
         void Dispose();
+        void ClearDB();
+        void ClearResult();
     }
 }

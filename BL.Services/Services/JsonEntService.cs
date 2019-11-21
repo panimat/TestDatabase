@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using BL.Services.Interfaces;
 using DL.Context.Interfaces;
 using DL.Context.Entities;
 using System.Linq;
-using System.Diagnostics;
 
 namespace BL.Services.Services
 {
@@ -26,9 +24,7 @@ namespace BL.Services.Services
         {
             try
             {
-                _unitOfWork.ResultEntities.DeleteAllData();
-                _unitOfWork.JsonEntities.DeleteAllData();
-                _unitOfWork.Save();
+                ClearDB();
 
                 const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
                 Random random = new Random();
@@ -74,6 +70,18 @@ namespace BL.Services.Services
         public int GetLastIndex()
         {
             return _unitOfWork.JsonEntities.GetAll().OrderByDescending(x => x.Id).First().Id;
+        }
+
+        public void ClearResult()
+        {
+            _unitOfWork.ResultEntities.DeleteAllData();
+            _unitOfWork.Save();
+        }
+
+        public void ClearDB()
+        {
+            _unitOfWork.JsonEntities.DeleteAllData();
+            _unitOfWork.Save();
         }
     }
 }
