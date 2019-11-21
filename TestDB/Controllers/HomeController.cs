@@ -6,6 +6,7 @@ using TestDB.Models;
 using BL.Services.Interfaces;
 using DL.Context.Interfaces;
 using System.Web.Helpers;
+using Newtonsoft.Json;
 
 namespace TestDB.Controllers
 {
@@ -20,29 +21,14 @@ namespace TestDB.Controllers
             var viewResult = new ResultViewModel() { Results = new List<Result>(), Change = false };
         }
 
-        public IActionResult Index()
+        // GET: Home
+        public ActionResult Index()
         {
+
+
             return View(new ResultViewModel());
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        [HttpPost]
-        public IActionResult MakeData()
-        {
-            return View("OkPage");
-        }
-
-        
         [HttpGet]
         public IActionResult FindBy(int amount)
         {

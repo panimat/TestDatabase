@@ -1,0 +1,53 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script>
+window.onload = function () {
+
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	title: {
+		text: "Test Database"
+	},
+	axisY: {
+		includeZero: false
+	},
+	toolTip: {
+		shared: true
+	},
+	data: [{
+		type: "line",
+		name: "Json",
+		showInLegend: true,
+		dataPoints: @Html.Raw(ViewBag.DataPointsJson)
+	}, {
+		type: "line",
+		name: "JsonB",
+		showInLegend: true,
+		dataPoints: @Html.Raw(ViewBag.DataPointsJsonB)
+	}, {
+		type: "line",
+		name: "String",
+		showInLegend: true,
+		dataPoints: @Html.Raw(ViewBag.DataPointsString)
+	}, {
+		type: "line",
+		name: "Entity",
+		showInLegend: true,
+		dataPoints: @Html.Raw(ViewBag.DataPointsEntity)
+	}]
+});
+chart.render();
+
+}
+    </script>
+</head>
+<body>
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</body>
+</html>   
